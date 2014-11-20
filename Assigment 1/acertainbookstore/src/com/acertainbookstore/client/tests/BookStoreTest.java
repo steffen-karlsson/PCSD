@@ -29,7 +29,7 @@ public class BookStoreTest {
 	private static final int TEST_ISBN = 3044560;
     private static final int TEST_ISBN2 = 3044563;
 	private static final int NUM_COPIES = 5;
-	private static boolean localTest = true;
+	private static boolean localTest = false;
 	private static StockManager storeManager;
 	private static BookStore client;
 
@@ -313,7 +313,6 @@ public class BookStoreTest {
 
     @Test
     public void testRateBooksInvalid() throws BookStoreException {
-        List<StockBook> booksInStorePreTest = storeManager.getBooks();
         Set<BookRating> ratings = new HashSet<BookRating>();
         ratings.add(new BookRating(TEST_ISBN,6)); // Invalid rating
         try {
