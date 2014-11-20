@@ -327,7 +327,31 @@ public class CertainBookStore implements BookStore, StockManager {
 	@Override
 	public synchronized void rateBooks(Set<BookRating> bookRating)
 			throws BookStoreException {
-		throw new BookStoreException("Not implemented");
+        if (bookRating == null) {
+            throw new BookStoreException(BookStoreConstants.NULL_INPUT);
+        }
+
+        int ISBN;
+        int ratingValue;
+        for (BookRating rating : bookRating) {
+            ISBN = rating.getISBN();
+            ratingValue = rating.getRating();
+            if (BookStoreUtility.isInvalidRating(ratingValue))
+                throw new BookStoreException(BookStoreConstants.RATING + ratingValue
+                    + BookStoreConstants.INVALID);
+            if (BookStoreUtility.isInvalidISBN(ISBN))
+                throw new BookStoreException(BookStoreConstants.ISBN + ISBN
+                        + BookStoreConstants.INVALID);
+            if (!bookMap.containsKey(ISBN))
+                throw new BookStoreException(BookStoreConstants.ISBN + ISBN
+                    + BookStoreConstants.NOT_AVAILABLE);
+        }
+
+        BookStoreBook book;
+        for (BookRating rating : bookRating) {
+            book = bookMap.get(rating.getISBN());
+            book.addRating(rating.getRating());
+        }
 	}
 
 	public synchronized void removeAllBooks() throws BookStoreException {
