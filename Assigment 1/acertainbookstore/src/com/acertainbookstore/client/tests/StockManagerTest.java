@@ -35,7 +35,7 @@ public class StockManagerTest {
 	private static final Integer TEST_ISBN = 30345650;
 	private static final Integer NUM_COPIES = 5;
 
-	private static boolean localTest = true;
+	private static boolean localTest = false;
 	private static StockManager storeManager;
 	private static BookStore client;
 
