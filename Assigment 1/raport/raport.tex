@@ -15,14 +15,86 @@ Kai Ejler Rasmussen}
 \begin{document}
 \maketitle
 
-\section{Exercises}
-\subsection{Question 1: Fundamental Abstractions}
+\section*{Exercises}
+\subsection*{Question 1: Fundamental Abstractions}
+\begin{enumerate}
+	\item 
+	We split the address used in READ and WRITE into a group of X least significant bits and a group of $Bits_{max}-X$ bits. The most significant group will refer to a machine using a name resolution service, in the client, and the least significant group will refer to a memory address on the specified server. Each server is added sequentially in the bit domain to allow for a sequential memory domain. The scalability of this solution depends on the distribution between the two groups in the naming. A possible distribution in a 64 bit domain could be $2^{56_{bits}}$ memory addresses and $2^{8_{bits}}$ possible machines. 
+	
+	This design, if configured correctly, will automatically change server when the address rolls over in the most significant group.
+	
+	
+	\item The READ and WRITE API are both using a name resolution service (ie. lookup table or other service) to resolve the ip of the receiving server. The value is then read or written using RPC.
+	\\
+\begin{lstlisting}
+READ(name)
+  ip <- lookupServer(name & SERVER_BITMASK)
+  memory <- name & MEMORY_BITMASK
+  return getValueFromServer(ip, memory)
+\end{lstlisting}	
 
-\subsection{Question 2: Techniques for Performance}
+\begin{lstlisting}
+WRITE(name,value)
+  ip <- lookupServer(name & SERVER_BITMASK)
+  memory <- name & MEMORY_BITMASK
+  writeValueToServer(ip, memory, value)
+\end{lstlisting}
+	
+	\item The READ/WRITE API of the abstraction layer should be atomic to keep consistency, since generic READ/WRITE operations are atomic. To achieve this, a lock is obtained during the operations on the remote machine.
+	
+	\item The design allows for dynamic joins and leaves as long as the sequence is intact. If the servers 1,2 and 3 is available, a fourth server can be added as 00000100 (big-endian) in a byte to allow for roll over. The design does, however, not allow for serves to be added or removed out of sequence. For example removing server 2 gives the invalid sequence $1,3,4$. To accommodate for this, a centralized service layer could be added to reallocate memory addresses to similar to how bad blocks are reallocated on persistent storage.
+	
+	
+\end{enumerate}
 
-\section{Questions for Discussion on Architecture}
+\subsection*{Question 2: Techniques for Performance}
+\begin{enumerate}
+	\item 
+	
+	
+	\item
+	\item
+	Looking up in the cache before forwarding the request to be evaluated, if the cache was insufficient, is a fast path optimization. 	
+	
+\end{enumerate}
 
+\section*{Questions for Discussion on Architecture}
+\subsection*{Question 1}
+\begin{itemize}
+	\item[a.] Its strongly modular because the server-side and the client packages are independent, their common logic is separated from the two main modules.
+	\item[b.] Taking a look at the two different client interfaces, namely \texttt{StockManager} and \texttt{BookStore} one might conclude that following - in a real life case - could be using the first interface \texttt{StockManager} for internal usages in the book company. Whereas the \texttt{BookStore} then most likely will be used for outside clients who wish to either rate or buy a book etc.
+	\newline
+	
+	The reason for separating such interface instead of one including all, is that you want to separate "business" logic from clients and for safety/privacy reasons - i.e. an costumer i following setup isn't able to modify state of a book.
+	\item[c.] Running the clients and services locally in the same JVM, forces the program to use the \texttt{CertainBookStore}, which both is a \texttt{StockManager} and a \texttt{BookStore} and therefor contains the functionality of all different interactions with the server. In this situation is the client and the server sharing the address space.
+\end{itemize}
 
+\subsection*{Question 2}
+\begin{itemize}
+	\item[a.] The naming service is available throughout the \texttt{BookStoreHTTPMessageHandler}, which parses the requested api-call, extracts the name (one of following available in: \texttt{BookStoreMessageTag}) and executes the requested code.
+	\item[b.] The naming service the client is using to communicate with the server is in this case the operating system, since the host is hard-coded to localhost on a specific port. Localhost is then mapped to the ip-address 127.0.0.1, which HTTP uses for communication.
+\end{itemize}
+
+\subsection*{Question 3}
+All communication from client to server is implemented using the \texttt{SendAndRecv} method from the \texttt{BookStoreUtility}, this function secures an \textit{at-most-once} RPC semantic. The function doesn't try to resend if any failure and therefore it is not a \textit{at-least-once} semantic. In addition we doesn't have any tags on our requests and therefore can't secure that a request is send \textit{exactly-once}.
+
+\subsection*{Question 4}
+\begin{itemize}
+	\item[a.]  Since non of our \texttt{GET} requests have any side-effects, it is secure to use web proxies for this kind of architecture.
+	\item[b.] 
+\end{itemize}
+
+\subsection*{Question 5}
+\begin{itemize}
+	\item[a.] 
+	\item[b.]
+\end{itemize}
+
+\subsection*{Question 6}
+\begin{itemize}
+	\item[a.] 
+	\item[b.]
+\end{itemize}
 
 \end{document}
 
