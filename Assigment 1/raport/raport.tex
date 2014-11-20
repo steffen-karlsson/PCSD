@@ -42,7 +42,7 @@ WRITE(name,value)
 	
 	\item The READ/WRITE API of the abstraction layer should be atomic to keep consistency, since generic READ/WRITE operations are atomic. To achieve this, a lock is obtained during the operations on the remote machine.
 	
-	\item The design allows for dynamic joins and leaves as long as the sequence is intact. If the servers 1,2 and 3 is available, a fourth server can be added as 00000010 (big-endian) in a byte to allow for roll over. The design does, however, not allow for serves to be added or removed out of sequence. For example removing server 2 gives the invalid sequence $1,3,4$. To accommodate for this, a centralized service layer could be added to reallocate memory addresses to similar to how bad blocks are reallocated on persistent storage.
+	\item The design allows for dynamic joins and leaves as long as the sequence is intact. If the servers 1,2 and 3 is available, a fourth server can be added as 00000100 (big-endian) in a byte to allow for roll over. The design does, however, not allow for serves to be added or removed out of sequence. For example removing server 2 gives the invalid sequence $1,3,4$. To accommodate for this, a centralized service layer could be added to reallocate memory addresses to similar to how bad blocks are reallocated on persistent storage.
 	
 	
 \end{enumerate}
@@ -50,8 +50,12 @@ WRITE(name,value)
 \subsection*{Question 2: Techniques for Performance}
 \begin{enumerate}
 	\item 
+	
+	
 	\item
 	\item
+	Looking up in the cache before forwarding the request to be evaluated, if the cache was insufficient, is a fast path optimization. 	
+	
 \end{enumerate}
 
 \section*{Questions for Discussion on Architecture}
