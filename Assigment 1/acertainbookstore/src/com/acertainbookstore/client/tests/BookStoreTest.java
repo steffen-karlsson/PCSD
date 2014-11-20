@@ -6,17 +6,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.acertainbookstore.business.*;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.acertainbookstore.business.Book;
-import com.acertainbookstore.business.BookCopy;
-import com.acertainbookstore.business.CertainBookStore;
-import com.acertainbookstore.business.ImmutableStockBook;
-import com.acertainbookstore.business.StockBook;
 import com.acertainbookstore.client.BookStoreHTTPProxy;
 import com.acertainbookstore.client.StockManagerHTTPProxy;
 import com.acertainbookstore.interfaces.BookStore;
@@ -31,6 +27,7 @@ import com.acertainbookstore.utils.BookStoreException;
 public class BookStoreTest {
 
 	private static final int TEST_ISBN = 3044560;
+    private static final int TEST_ISBN2 = 3044563;
 	private static final int NUM_COPIES = 5;
 	private static boolean localTest = true;
 	private static StockManager storeManager;
@@ -313,6 +310,98 @@ public class BookStoreTest {
 				&& booksInStorePreTest.size() == booksInStorePostTest.size());
 
 	}
+
+    @Test
+    public void testRateBooksInvalid() throws BookStoreException {
+        List<StockBook> booksInStorePreTest = storeManager.getBooks();
+        Set<BookRating> ratings = new HashSet<BookRating>();
+        ratings.add(new BookRating(TEST_ISBN,6)); // Invalid rating
+        try {
+            client.rateBooks(ratings);
+            fail();
+        } catch (BookStoreException e){
+            assertTrue(e.getMessage().startsWith(BookStoreConstants.RATING));
+        }
+
+        ratings.add(new BookRating(TEST_ISBN,-1)); // Invalid rating
+        try {
+            client.rateBooks(ratings);
+            fail();
+        } catch (BookStoreException e){
+            assertTrue(e.getMessage().startsWith(BookStoreConstants.RATING));
+        }
+    }
+
+    @Test
+    public void testRateBooksValid() throws BookStoreException {
+        List<StockBook> booksInStorePreTest = storeManager.getBooks();
+        Set<BookRating> ratings = new HashSet<BookRating>();
+        ratings.add(new BookRating(TEST_ISBN, 3));
+        try {
+            client.rateBooks(ratings);
+        } catch (Exception e){
+            fail();
+        }
+    }
+
+    @Test
+    public void testTopRatedBooks() throws BookStoreException {
+        List<StockBook> booksInStorePreTest = storeManager.getBooks();
+        StockBook b = new ImmutableStockBook(TEST_ISBN2, "Hitch hickers Guide to JUnit",
+                "JK Unit", (float) 10, NUM_COPIES, 0, 0, 0, false);
+        Set<StockBook> books = new HashSet<StockBook>();
+        books.add(b);
+        storeManager.addBooks(books);
+        Set<BookRating> ratings = new HashSet<BookRating>();
+        ratings.add(new BookRating(TEST_ISBN, 4));
+        ratings.add(new BookRating(TEST_ISBN2, 5));
+        List<Book> topRatedBooks = client.getTopRatedBooks(2);
+        assertEquals(topRatedBooks.size(),2);
+        assertEquals(topRatedBooks.get(0).getISBN(),TEST_ISBN2);
+        assertEquals(topRatedBooks.get(1).getISBN(),TEST_ISBN);
+    }
+
+    /**
+     * Tests that top rated books only returns K books.
+     * @throws BookStoreException
+     */
+    @Test
+    public void testTopRatedBooks2() throws BookStoreException {
+        StockBook b = new ImmutableStockBook(TEST_ISBN2, "Hitch hickers Guide to JUnit",
+                "JK Unit", (float) 10, NUM_COPIES, 0, 0, 0, false);
+        Set<StockBook> books = new HashSet<StockBook>();
+        books.add(b);
+        storeManager.addBooks(books);
+        Set<BookRating> ratings = new HashSet<BookRating>();
+        ratings.add(new BookRating(TEST_ISBN, 4));
+        ratings.add(new BookRating(TEST_ISBN2, 5));
+        List<Book> topRatedBooks = client.getTopRatedBooks(1);
+        assertEquals(topRatedBooks.size(),1);
+        assertEquals(topRatedBooks.get(0).getISBN(),TEST_ISBN2);
+    }
+
+    /**
+     * Tests that an exception is throw is we try to get to
+     * many rated books.
+     * @throws BookStoreException
+     */
+    @Test
+    public void testTopRatedBooks3() throws BookStoreException {
+        StockBook b = new ImmutableStockBook(TEST_ISBN2, "Hitch hickers Guide to JUnit",
+                "JK Unit", (float) 10, NUM_COPIES, 0, 0, 0, false);
+        Set<StockBook> books = new HashSet<StockBook>();
+        books.add(b);
+        storeManager.addBooks(books);
+        Set<BookRating> ratings = new HashSet<BookRating>();
+        ratings.add(new BookRating(TEST_ISBN, 4));
+        ratings.add(new BookRating(TEST_ISBN2, 5));
+        try {
+            List<Book> topRatedBooks = client.getTopRatedBooks(3);
+            fail();
+        } catch (BookStoreException e){
+            assertTrue(e.getMessage().startsWith(""));
+        }
+    }
 
 	@AfterClass
 	public static void tearDownAfterClass() throws BookStoreException {
