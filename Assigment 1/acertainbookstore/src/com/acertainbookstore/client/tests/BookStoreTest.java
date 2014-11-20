@@ -399,8 +399,40 @@ public class BookStoreTest {
             List<Book> topRatedBooks = client.getTopRatedBooks(3);
             fail();
         } catch (BookStoreException e){
-            assertTrue(e.getMessage().startsWith(""));
+            assertTrue(e.getMessage().startsWith("numBooks is less"));
         }
+    }
+
+    @Test
+    public void testGetBooksInDemand() throws BookStoreException {
+        StockBook b = new ImmutableStockBook(TEST_ISBN2, "Hitch hickers Guide to JUnit",
+                "JK Unit", (float) 10, NUM_COPIES, 0, 0, 0, false);
+        Set<StockBook> books = new HashSet<StockBook>();
+        books.add(b);
+        storeManager.addBooks(books);
+        assertEquals(storeManager.getBooksInDemand().size(), 0);
+        Set<BookCopy> booksToBuy = new HashSet<BookCopy>();
+        booksToBuy.add(new BookCopy(TEST_ISBN, NUM_COPIES));
+        client.buyBooks(booksToBuy);
+        assertEquals(storeManager.getBooksInDemand().size(), 0);
+        try {
+            client.buyBooks(booksToBuy);
+        } catch (BookStoreException e){}
+        assertEquals(storeManager.getBooksInDemand().size(), 1);
+        booksToBuy.clear();
+        booksToBuy.add(new BookCopy(TEST_ISBN2, NUM_COPIES+1));
+        try {
+            client.buyBooks(booksToBuy);
+        } catch (BookStoreException e) {}
+
+        assertEquals(storeManager.getBooksInDemand().size(), 2);
+
+        Set<BookCopy> copies = new HashSet<BookCopy>();
+        copies.add(new BookCopy(TEST_ISBN2, 18));
+
+        storeManager.addCopies(copies);
+
+        assertEquals(storeManager.getBooksInDemand().size(), 1);
     }
 
 	@AfterClass
