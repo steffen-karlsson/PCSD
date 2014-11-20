@@ -5,6 +5,8 @@ package com.acertainbookstore.business;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -274,10 +276,46 @@ public class CertainBookStore implements BookStore, StockManager {
 
 	}
 
+	/*
+	allows a client to query for the top-K books according
+	to average rating, for a given positive integer K. The average rating is
+	computed by dividing the aggregate rating by the number of ratings. 
+	As allows a client to query for the top-K books according
+	to average rating, for a given positive integer K. The average rating is
+	computed by dividing the aggregate rating by the number of ratings. As
+	 */
+	
 	@Override
 	public synchronized List<Book> getTopRatedBooks(int numBooks)
 			throws BookStoreException {
-		throw new BookStoreException("Not implemented");
+		if (numBooks < 0) {
+			throw new BookStoreException("numBooks = " + numBooks
+					+ ", but it must be positive");
+		}
+		
+		if (bookMap.size() < numBooks) {
+			throw new BookStoreException("numBooks is less than the amount of books available");
+		}
+		
+		List<Book> topRatedBooks = new ArrayList<Book>();
+		ArrayList<BookStoreBook> sorted = new ArrayList<BookStoreBook>(bookMap.values());
+		
+		Collections.sort(sorted, new Comparator<BookStoreBook>() {
+
+			@Override
+			public int compare(BookStoreBook arg0, BookStoreBook arg1) {
+				return (int) (arg0.getTotalRating() - arg1.getTotalRating());
+			}
+			
+		});
+		
+		Iterator<BookStoreBook> it = sorted.iterator();
+
+		for (int i = 0; i < numBooks; i++){
+			topRatedBooks.add(it.next());
+		}
+		
+		return topRatedBooks;
 	}
 
 	@Override
