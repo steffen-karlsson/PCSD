@@ -11,6 +11,8 @@
 */.idea/tasks.xml
 */.idea/
 
+raport.pdf
+
 *.aux
 *.fdb_latexmk
 *.log

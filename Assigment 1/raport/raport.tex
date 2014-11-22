@@ -50,11 +50,17 @@ WRITE(name,value)
 \subsection*{Question 2: Techniques for Performance}
 \begin{enumerate}
 	\item 
+	Concurrency can reduce latency by splitting a request into several subtasks. In theory this speeds up the processing by a factor of $n$, where $n$ is the number of subtasks in parallel. However, there is still some overhead due to the splitting and serialization of collecting the results again which slows the concurrency. This overhead should be trivial for large requests compared to the performance gained.
 	
+	Concurrency increases performance if the task allows for it, however, it is difficult to implement and test concurrency. Concurrency can also decrease performance in cases where the overhead takes up more computation time than the actual request.
 	
 	\item
+	Batching removes overhead from several requests by grouping them and processing them within the same request. This can be used to group read/write request to harddrive and minimize the movement of the disk arm by reordering the requests.
+	
+	Dallying is the concept of delaying requests, thus increasing latency, for the chance that the request won't be needed. For example, delaying a write request expecting a newer request to overwrite it will allow for deletion of the first request. This is also known as write absorption. Removing requests in dallying should make up for the latency it imposes in order to increase performance. 
+	
 	\item
-	Looking up in the cache before forwarding the request to be evaluated, if the cache was insufficient, is a fast path optimization. 	
+	Having few central servers can give increased latency around the world, however, introducing geographically close caching servers solves this. These caching servers will act as a fast path for the most common requests, but cache misses will cause the request to contact the central servers, ie. the slow path, through the caching servers.
 	
 \end{enumerate}
 
@@ -80,8 +86,8 @@ All communication from client to server is implemented using the \texttt{SendAnd
 
 \subsection*{Question 4}
 \begin{itemize}
-	\item[a.]  Since non of our \texttt{GET} requests have any side-effects, it is secure to use web proxies for this kind of architecture.
-	\item[b.] 
+	\item[a.] Since non of our \texttt{GET} requests have any side-effects, it is secure to use web proxies for this kind of architecture.
+	\item[b.] The only two places in this system where a web proxy would make sense, is behind the two clients, namely: \texttt{StockManager} an \texttt{BookStore}. Since the \texttt{StockManager} most likely is for internal usage, due to the API-calls exposed by the client, do we assume that the need for a web-proxy here isn't quite as high as the need behind the \texttt{BookStore} client, which is exposed to all the potential customers.
 \end{itemize}
 
 \subsection*{Question 5}
