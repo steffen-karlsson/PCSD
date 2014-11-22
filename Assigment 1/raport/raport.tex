@@ -50,51 +50,21 @@ WRITE(name,value)
 \subsection*{Question 2: Techniques for Performance}
 \begin{enumerate}
 	\item 
+	Concurrency can reduce latency by splitting a request into several subtasks. In theory this speeds up the processing by a factor of $n$, where $n$ is the number of subtasks in parallel. However, there is still some overhead due to the splitting and serialization of collecting the results again which slows the concurrency. This overhead should be trivial for large requests compared to the performance gained.
 	
+	Concurrency increases performance if the task allows for it, however, it is difficult to implement and test concurrency. Concurrency can also decrease performance in cases where the overhead takes up more computation time than the actual request.
 	
 	\item
+	Batching removes overhead from several requests by grouping them and processing them within the same request. This can be used to group read/write request to harddrive and minimize the movement of the disk arm by reordering the requests.
+	
+	Dallying is the concept of delaying requests, thus increasing latency, for the chance that the request won't be needed. For example, delaying a write request expecting a newer request to overwrite it will allow for deletion of the first request. This is also known as write absorption. Removing requests in dallying should make up for the latency it imposes in order to increase performance. 
+	
 	\item
-	Looking up in the cache before forwarding the request to be evaluated, if the cache was insufficient, is a fast path optimization. 	
+	Having few central servers can give increased latency around the world, however, introducing geographically close caching servers solves this. These caching servers will act as a fast path for the most common requests, but cache misses will cause the request to contact the central servers, ie. the slow path, through the caching servers.
 	
 \end{enumerate}
 
 \section*{Questions for Discussion on Architecture}
-\subsection*{Question 1}
-\begin{itemize}
-	\item[a.] Its strongly modular because the server-side and the client packages are independent, their common logic is separated from the two main modules.
-	\item[b.] Taking a look at the two different client interfaces, namely \texttt{StockManager} and \texttt{BookStore} one might conclude that following - in a real life case - could be using the first interface \texttt{StockManager} for internal usages in the book company. Whereas the \texttt{BookStore} then most likely will be used for outside clients who wish to either rate or buy a book etc.
-	\newline
-	
-	The reason for separating such interface instead of one including all, is that you want to separate "business" logic from clients and for safety/privacy reasons - i.e. an costumer i following setup isn't able to modify state of a book.
-	\item[c.] Running the clients and services locally in the same JVM, forces the program to use the \texttt{CertainBookStore}, which both is a \texttt{StockManager} and a \texttt{BookStore} and therefor contains the functionality of all different interactions with the server. In this situation is the client and the server sharing the address space.
-\end{itemize}
-
-\subsection*{Question 2}
-\begin{itemize}
-	\item[a.] The naming service is available throughout the \texttt{BookStoreHTTPMessageHandler}, which parses the requested api-call, extracts the name (one of following available in: \texttt{BookStoreMessageTag}) and executes the requested code.
-	\item[b.] The naming service the client is using to communicate with the server is in this case the operating system, since the host is hard-coded to localhost on a specific port. Localhost is then mapped to the ip-address 127.0.0.1, which HTTP uses for communication.
-\end{itemize}
-
-\subsection*{Question 3}
-All communication from client to server is implemented using the \texttt{SendAndRecv} method from the \texttt{BookStoreUtility}, this function secures an \textit{at-most-once} RPC semantic. The function doesn't try to resend if any failure and therefore it is not a \textit{at-least-once} semantic. In addition we doesn't have any tags on our requests and therefore can't secure that a request is send \textit{exactly-once}.
-
-\subsection*{Question 4}
-\begin{itemize}
-	\item[a.]  Since non of our \texttt{GET} requests have any side-effects, it is secure to use web proxies for this kind of architecture.
-	\item[b.] 
-\end{itemize}
-
-\subsection*{Question 5}
-\begin{itemize}
-	\item[a.] 
-	\item[b.]
-\end{itemize}
-
-\subsection*{Question 6}
-\begin{itemize}
-	\item[a.] 
-	\item[b.]
-\end{itemize}
 
 \end{document}
 
