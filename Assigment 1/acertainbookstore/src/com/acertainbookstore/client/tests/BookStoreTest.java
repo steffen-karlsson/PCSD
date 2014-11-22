@@ -313,7 +313,6 @@ public class BookStoreTest {
 
     @Test
     public void testRateBooksInvalid() throws BookStoreException {
-        List<StockBook> booksInStorePreTest = storeManager.getBooks();
         Set<BookRating> ratings = new HashSet<BookRating>();
         ratings.add(new BookRating(TEST_ISBN,6)); // Invalid rating
         try {
