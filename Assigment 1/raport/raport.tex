@@ -96,5 +96,16 @@ All communication from client to server is implemented using the \texttt{SendAnd
 	\item[b.]
 \end{itemize}
 
+\section*{Tests}
+We have created some unit-tests for tested the functionality that we have implemented. In the following list we explain which tests we have created and what they tests:
+\begin{enumerate}
+\item \texttt{testRateBooksInvalid}: Tests that we get the expected exception if we try to to \texttt{rateBooks} with a invalid rating (outside the range of 0-5).
+\item \texttt{testRateBooksValid}: Tests that a rating with an existing ISBN number and a valid rating is accepted, and does not thrown an exception.
+\item \texttt{testTopRatedBooks}: Tests that the \texttt{getTopRatedBooks} function works as expected, by rating books, and then retrieved them sorted according to their rating. 
+\item \texttt{testTopRatedBooks2}: Tests that the \texttt{getTopRatedBooks} function only returns the number of books received as a parameter. 
+\item \texttt{testTopRatedBooks3}: Tries to received a higher number of books, than the bookstore have, and tests that the code throws the expected exception. 
+\item \texttt{testGetBooksInDemand}: Test the function \texttt{getBooksInDemand}, by testing that no books, is in demand when we starts, and that books goes into demand when a client tries to buys more copies of a book than available, and that a books is no longer in demand when a store manager adds more copies of the book.
+\end{enumerate}
+
 \end{document}
 

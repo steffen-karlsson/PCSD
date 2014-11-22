@@ -333,7 +333,6 @@ public class BookStoreTest {
 
     @Test
     public void testRateBooksValid() throws BookStoreException {
-        List<StockBook> booksInStorePreTest = storeManager.getBooks();
         Set<BookRating> ratings = new HashSet<BookRating>();
         ratings.add(new BookRating(TEST_ISBN, 3));
         try {
@@ -345,7 +344,6 @@ public class BookStoreTest {
 
     @Test
     public void testTopRatedBooks() throws BookStoreException {
-        List<StockBook> booksInStorePreTest = storeManager.getBooks();
         StockBook b = new ImmutableStockBook(TEST_ISBN2, "Hitch hickers Guide to JUnit",
                 "JK Unit", (float) 10, NUM_COPIES, 0, 0, 0, false);
         Set<StockBook> books = new HashSet<StockBook>();
