@@ -4,7 +4,7 @@ package com.acertainbookstore.business;
  * Simple class for updating the number of book copies.
  * 
  */
-public class BookCopy {
+public class BookCopy implements Comparable<BookCopy> {
 	private int ISBN;
 	private int numCopies;
 
@@ -55,16 +55,18 @@ public class BookCopy {
 	}
 
 	public boolean equals(Object obj) {
-		if (obj == null || getClass() != obj.getClass()) {
-			return false;
-		}
-		if ((this.getISBN() == ((BookCopy) obj).getISBN())) {
-			return true;
-		}
-		return false;
-	}
+        return !(obj == null || getClass() != obj.getClass())
+                && (this.getISBN() == ((BookCopy) obj).getISBN());
+    }
 
 	public int hashCode() {
 		return getISBN();
 	}
+
+    @Override
+    public int compareTo(BookCopy o) {
+        if (o == null)
+            return -1;
+        return this.getISBN() - o.getISBN();
+    }
 }

@@ -4,7 +4,7 @@ package com.acertainbookstore.business;
  * Structure to represent the editor's rating for a book
  * 
  */
-public class BookEditorPick {
+public class BookEditorPick implements Comparable<BookEditorPick> {
 	private int ISBN;
 	private boolean editorPick;
 
@@ -42,4 +42,11 @@ public class BookEditorPick {
 	public int hashCode() {
 		return getISBN();
 	}
+
+    @Override
+    public int compareTo(BookEditorPick o) {
+        if (o == null)
+            return -1;
+        return this.getISBN() - o.getISBN();
+    }
 }
