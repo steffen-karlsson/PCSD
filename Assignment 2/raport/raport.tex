@@ -15,4 +15,32 @@ Kai Ejler Rasmussen}
 \begin{document}
 \maketitle
 
+\section*{Exercises}
+\subsection*{Question 1: Serializability \& Locking}
+
+\subsection*{Question 2: Optimistic Concurrency Control}
+\subsubsection*{Scenario 1}
+\texttt{T3} is not allowed to commit because of validation test 2, regarding $T_i$ completes before $T_j$ begins its write phase, which is validated by checking that the intersection between the write set of $T_i$ and the read set of $T_j$ is equal to the empty set (Ø). In other words is the intersection in this case between write set of \texttt{T2} and read set of \texttt{T3} not empty.
+\newline
+
+The conflicting element in the intersection is: 4.
+
+\subsubsection*{Scenario 2}
+\texttt{T3} is again not allowed to commit due to same reason as above, just between \texttt{T1} and \texttt{T3} instead of \texttt{T2}.
+\newline
+
+The conflicting element in the intersection is: 3.
+
+\subsubsection*{Scenario 3}
+\texttt{T3} is allowed to commit because of two times validation test 2, as described in \textbf{Scenario 2}: \texttt{WS}(T1) $\cap$ \texttt{RS}(T3) = Ø and \texttt{WS}(T2) $\cap$ \texttt{RS}(T3) = Ø. Therefore does this scenario holds.
+
+\subsection*{Questions for Discussion on the Concurrent Implementa- tion of Bookstore}
+
+\begin{enumerate}
+	\item
+	\item
+	\item
+	\item
+\end{enumerate}
+
 \end{document}
