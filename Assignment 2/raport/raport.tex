@@ -81,10 +81,10 @@ The conflicting element in the intersection is: 3.
 \subsection*{Questions for Discussion on the Concurrent Implementa- tion of Bookstore}
 
 \begin{enumerate}
-	\item 
-	\item We have implemented, as described, the strict 2PL locking protocol, which are vulnerable to deadlocks. We have tried to prevent it from happen, by sorting all inputs to the various methods, such that the acquisition of locks is in the same order each time. As an extension, what could have been implemented is the wait-for graph, which can abort cycles if they are is detected (equal to a deadlock).
+	\item Our locking protocol is based on strict 2 phase locking. Write or reads locks are acquired right before they are needed and all locks are released as the last call of the functions. A non-conservative 2PL is vulnerable to deadlocks which is explained below.
+	\item We have implemented, as described, the strict 2PL locking protocol, which are vulnerable to deadlocks. We have tried to prevent it from happen, by sorting all inputs to the various methods, such that the acquisition of locks is in the same order each time. As an extension, what could have been implemented is the wait-for graph, which can abort cycles if they are detected (equal to a deadlock).
 	\item A potential bottleneck in the system is that, when we insert a new book into the bookstore, we take a write lock on the whole \texttt{bookMap} and therefore it is only possible to insert one at a time. 
-	\item 
+	\item The local implementation of using locks gives very little overhead compared to the possible concurrency. If only read request are requested, the number of concurrent request is equal to maximum number allowed threads which makes the overhead insignificant. However, write requests will block the concurrent read requests. Fortunately, read request are more likely to happen compared to write requests in this scenario.
 \end{enumerate}
 
 \section*{Test-cases}
