@@ -1,7 +1,8 @@
 package com.acertainbookstore.client.workloads;
 
-import java.util.Set;
+import java.util.*;
 
+import com.acertainbookstore.business.ImmutableStockBook;
 import com.acertainbookstore.business.StockBook;
 
 /**
@@ -9,6 +10,9 @@ import com.acertainbookstore.business.StockBook;
  * class
  */
 public class BookSetGenerator {
+
+    private Random r = new Random(System.currentTimeMillis());
+    private int currentISBN = 2;
 
 	public BookSetGenerator() {
 		// TODO Auto-generated constructor stub
@@ -21,7 +25,9 @@ public class BookSetGenerator {
 	 * @return
 	 */
 	public Set<Integer> sampleFromSetOfISBNs(Set<Integer> isbns, int num) {
-		return null;
+        ArrayList<Integer> arrayIsbns = new ArrayList<Integer>(isbns);
+        Collections.shuffle(arrayIsbns);
+        return new HashSet<Integer>(arrayIsbns.subList(0, num));
 	}
 
 	/**
@@ -31,7 +37,21 @@ public class BookSetGenerator {
 	 * @return
 	 */
 	public Set<StockBook> nextSetOfStockBooks(int num) {
-		return null;
+        Set<StockBook> books = new HashSet<StockBook>();
+        for (int i = 0; i<num; i++) {
+            int isbn = currentISBN++;
+            books.add(new ImmutableStockBook(
+                    isbn,
+                    "Book " + isbn,
+                    "Unknown",
+                    42.0f,
+                    2 + r.nextInt(100),
+                    0,
+                    r.nextInt(10),
+                    1 + r.nextInt(3),
+                    r.nextBoolean()));
+        }
+		return books;
 	}
 
 }
