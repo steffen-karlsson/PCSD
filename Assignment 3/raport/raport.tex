@@ -16,6 +16,43 @@ Kai Ejler Rasmussen}
 \maketitle
 
 \section*{Exercises}
+\subsection*{Question 1: Recovery Concepts}
+\begin{enumerate}
+	\item No Force requires redo because the pages not necessarily have been written to the disk and Steal allows swapping dirty pages from main memory to disk and therefore requires undo. By these assumptions force and no-steal requires neither redo or undo.
+	\item Both nonvolatile and stable storage can recover from a crash given that \texttt{ARIES} is implemented, but if a media crash happens, we lose nonvolatile storage. But using stable storage on the other hand, we have a negligible chance of losing the data, because stable storage typically is implemented using RAID-1 or greater or off-site backups.
+	\item In a system that implements Wirte-Ahead Logging, the log tail is forced to stable storage during either commit or page swap. During commit because its the no-force method which requires redo, and second of all the page swap is a steal operation, which as mentioned earlier requires undo. In order to repeat history after a crash or media crash it is necessary to force write the logs to stable storage.
+\end{enumerate}
 
+\subsection*{Question 2: ARIES}
+\begin{enumerate}
+	\item The dirty-page table after the analysis phase looks like following:
+		\begin{center}
+		\begin{tabular}{|l|l|}
+			\hline
+			\textbf{pageID} & \textbf{recLSN} \\ \hline
+			P2 & 3 \\ \hline
+			P1 & 4 \\ \hline
+			P5 & 5 \\ \hline
+			P3 & 9 \\ \hline
+		\end{tabular}
+		\end{center}
+		, and the transaction table after same state looks like this:
+		\begin{center}
+		\begin{tabular}{|l|l|l|}
+			\hline
+			\textbf{transID} & \textbf{lstLSN} & \textbf{status} \\ \hline
+			T1 & 4 & U \\ \hline
+			T2 & 9 & U \\ \hline
+		\end{tabular}
+		\end{center}
+		, the reason that \texttt{T3} isn't in the transaction table is that the transaction had committed before the crash happened.
+	\item All transactions left in the transaction table after the analysis phase is the looser transactions, which means that in our case its \texttt{T1} and \texttt{T2}. Due to this assumption, \texttt{T3} must be the only winner in this case.
+	\item The redo phase starts at the smallest \texttt{recLSN} value of all dirty pages in the dirty-page table and therefore is it in this case at value 3. The undo action ends at the same place where the redo action starts. 
+	\item
+	\item
+	\item
+\end{enumerate}
+
+\subsection*{Questions for Discussion}
 
 \end{document}
