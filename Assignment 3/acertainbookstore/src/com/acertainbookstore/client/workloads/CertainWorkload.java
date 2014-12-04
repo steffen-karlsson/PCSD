@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import com.acertainbookstore.business.CertainBookStore;
 import com.acertainbookstore.client.BookStoreHTTPProxy;
@@ -91,8 +92,42 @@ public class CertainWorkload {
 	 * @param workerRunResults
 	 */
 	public static void reportMetric(List<WorkerRunResult> workerRunResults) {
-		// TODO: You should aggregate metrics and output them for plotting here
-	}
+        final long RESOLUTION = TimeUnit.MILLISECONDS.toNanos(1);
+
+        int totalCustomerInteraction = 0;
+        int unsuccessfulRuns = 0;
+        int totalRuns = 0;
+
+        List<Double> allThroughput = new ArrayList<Double>();
+        List<Double> allLatency = new ArrayList<Double>();
+
+        for (WorkerRunResult result : workerRunResults) {
+            totalCustomerInteraction += result.getTotalFrequentBookStoreInteractionRuns();
+            totalRuns += result.getTotalRuns();
+            unsuccessfulRuns += (result.getTotalRuns() - result.getSuccessfulInteractions());
+
+            System.out.println(String.format("Successful requests: %d", result.getSuccessfulInteractions()));
+            System.out.println(String.format("Elapsed Time in Nano: %d", result.getElapsedTimeInNanoSecs()));
+
+            double latency = (result.getElapsedTimeInNanoSecs() / (double) RESOLUTION) / result.getTotalRuns();
+            System.out.println("Avg. Latency: " + latency);
+            allLatency.add(latency);
+
+            double throughput = result.getSuccessfulFrequentBookStoreInteractionRuns() /
+                    (result.getElapsedTimeInNanoSecs() / (double) RESOLUTION);
+            System.out.println("Throughput pr. 10 millis: " + throughput);
+            allThroughput.add(throughput);
+        }
+
+        System.out.println("Throughput: " + allThroughput);
+        System.out.println("Latency: " + allLatency);
+
+        System.out.println(String.format("Total requests: %d", totalRuns));
+        System.out.println(String.format("Percentage unsuccessful requests: %.2f",
+                unsuccessfulRuns / (float) totalRuns * 100));
+        System.out.println(String.format("Percentage Customer Interaction requests: %.2f",
+                totalCustomerInteraction / (float) totalRuns * 100));
+    }
 
 	/**
 	 * Generate the data in bookstore before the workload interactions are run
