@@ -54,5 +54,24 @@ Kai Ejler Rasmussen}
 \end{enumerate}
 
 \subsection*{Questions for Discussion}
-
+\begin{enumerate}
+	\item The two data generating methods, namely \texttt{sampleFromSetOfISBNs} and \texttt{nextSetOfStockBooks}, has mainly been implemented using the build in \texttt{Random} generator from Java. \texttt{sampleFromSetOfISBNs} has been implemented using the \textit{shuffle} method from the Collections interface and then picking a range from \texttt{[0..num]} to return. \texttt{nextSetOfStockBooks} is for each book assigning a new not used ISBN number and other values such as number of copies, price and rating is auto generated - but still ensured to be in range of the acceptable, such that it can pass the sanity checks from \texttt{BookStoreUtility}.
+	\newline
+	
+	To calculate the metrics, average throughput and latency, we have been using the same number of repetitions and configuration in general for all the different number of workers, to be able to compare the results. We have been using following different numbers of concurrent workload threads: \texttt{[1, 3, 5, 10, 20, 30, 50, 75, 100, 150, 250, 500, 1000]}, for each iterating did we calculate the average throughput and latency for each worker and then for all the workers in total.
+	\newline
+	
+	We have been using following hardware to run our tests on: Intel(R) Core(TM) i7-2600 CPU @ 3.40GHz and 8,00 GB Ram.
+	\item TODO
+	\begin{center}
+		\begin{figure}
+				\includegraphics[scale=0.5]{latency.png}
+				\caption{Plot of average latency using 1 to 1000 concurrent workload threads}
+		\end{figure}
+		\begin{figure}
+				\includegraphics[scale=0.5]{throughput.png}
+				\caption{Plot of average throughput using 1 to 1000 concurrent workload threads}
+		\end{figure}
+	\end{center}
+\end{enumerate}
 \end{document}
