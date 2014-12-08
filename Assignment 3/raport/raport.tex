@@ -20,7 +20,7 @@ Kai Ejler Rasmussen}
 \begin{enumerate}
 	\item No Force requires redo because the pages not necessarily have been written to the disk and Steal allows swapping dirty pages from main memory to disk and therefore requires undo. By these assumptions force and no-steal requires neither redo or undo.
 	\item Both nonvolatile and stable storage can recover from a crash given that \texttt{ARIES} is implemented, but if a media crash happens, we lose nonvolatile storage. But using stable storage on the other hand, we have a negligible chance of losing the data, because stable storage typically is implemented using RAID-1 or greater or off-site backups.
-	\item In a system that implements Wirte-Ahead Logging, the log tail is forced to stable storage during either commit or page swap. During commit because its the no-force method which requires redo, and second of all the page swap is a steal operation, which as mentioned earlier requires undo. In order to repeat history after a crash or media crash it is necessary to force write the logs to stable storage.
+	\item In a system that implements Write-Ahead Logging, the log tail is forced to stable storage during either commit or page swap. During commit because its the no-force method which requires redo, and second of all the page swap is a steal operation, which as mentioned earlier requires undo. In order to repeat history after a crash or media crash it is necessary to force write the logs to stable storage.
 \end{enumerate}
 
 \subsection*{Question 2: ARIES}

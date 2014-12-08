@@ -31,9 +31,9 @@ public class CertainWorkload {
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
-		int numConcurrentWorkloadThreads = 10;
+		int numConcurrentWorkloadThreads = 30;
 		String serverAddress = "http://localhost:8081";
-		boolean localTest = true;
+		boolean localTest = false;
 		List<WorkerRunResult> workerRunResults = new ArrayList<WorkerRunResult>();
 		List<Future<WorkerRunResult>> runResults = new ArrayList<Future<WorkerRunResult>>();
 
@@ -120,7 +120,21 @@ public class CertainWorkload {
         }
 
         System.out.println("Throughput: " + allThroughput);
+
+		double throughputSum = 0;
+		for (double i : allThroughput){
+			throughputSum += i;
+		}
+
+		System.out.println("Avg. Throughput: " + throughputSum / allThroughput.size());
         System.out.println("Latency: " + allLatency);
+
+		double latencySum = 0;
+		for (double i : allLatency){
+			latencySum += i;
+		}
+
+		System.out.println("Avg. Latency: " + latencySum / allLatency.size());
 
         System.out.println(String.format("Total requests: %d", totalRuns));
         System.out.println(String.format("Percentage unsuccessful requests: %.2f",
