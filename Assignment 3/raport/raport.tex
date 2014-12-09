@@ -46,11 +46,30 @@ Kai Ejler Rasmussen}
 		\end{tabular}
 		\end{center}
 		, the reason that \texttt{T3} isn't in the transaction table is that the transaction had committed before the crash happened.
-	\item All transactions left in the transaction table after the analysis phase is the looser transactions, which means that in our case its \texttt{T1} and \texttt{T2}. Due to this assumption, \texttt{T3} must be the only winner in this case.
+	\item All transactions left in the transaction table after the analysis phase is the loser transactions, which means that in our case its \texttt{T1} and \texttt{T2}. Due to this assumption, \texttt{T3} must be the only winner in this case.
 	\item The redo phase starts at the smallest \texttt{recLSN} value of all dirty pages in the dirty-page table and therefore is it in this case at value 3. The undo action ends at the same place where the redo action starts. 
-	\item
-	\item
-	\item
+	\item The log of records which may causes page to be rewritten during the undo is as following:
+	
+	\begin{tabular}{l l l l l}
+		\textbf{LSN} & \textbf{LAST\_LSN} & \textbf{TRAN\_ID} & \textbf{TYPE} & \textbf{PAGE\_ID} \\
+		3 & NULL & T1& \texttt{update} & P2 \\ 			
+		4 & 3 & T1 & \texttt{update} & P1 \\
+		5 & NULL & T2 & \texttt{update} & P5 \\
+		8 & 5 & T2 & \texttt{update} & P5 \\
+		9 & 8 & T2 & \texttt{update} & P3 \\
+	\end{tabular}
+	
+	, the reason for the result of this table is that it contains transactions for all pages which is part of the dirty page table, where the \texttt{recLSN} is not greater than the \texttt{LSN} being checked. Because of this is the log with LSN number 6 not part of the table.
+	\item The table of log records which may causes page to be rewritten during the redo phase is equal to the table from the undo phase above. The reason for this is that this table contains all loser transactions.
+	\item 
+	\begin{tabular}{l l l l l}
+		\textbf{LSN} & \textbf{LOG} \\
+		10 & \texttt{CLR}: Undo T2 LSN 9 (undoNextLSN = 8), T2 end \\
+		11 & \texttt{CLR}: Undo T2 LSN 8 (undoNextLSN = 5), T2 end \\
+		12 & \texttt{CLR}: Undo T2 LSN 5 (undoNextLSN = NULL), T2 end \\
+		13 & \texttt{CLR}: Undo T1 LSN 4 (undoNextLSN = 3), T1 end \\
+		14 & \texttt{CLR}: Undo T1 LSN 3 (undoNextLSN = NULL), T1 end \\
+	\end{tabular}
 \end{enumerate}
 
 \subsection*{Questions for Discussion}
@@ -62,8 +81,6 @@ Kai Ejler Rasmussen}
 	\newline
 	
 	We have been using following hardware to run our tests on: Intel(R) Core(TM) i7-2600 CPU @ 3.40GHz and 8,00 GB Ram.
-	
-
 
 	\item 
 	Figure \ref{fig1} shows the average thorughput that we have measured using the different numbers of concurrent workload threads above-mentioned. Notice that the throughput scala is logarithmic with base 10. The blue line show our measurements using executions in the same address space and the orange line shows our measurements using executions across address spaces. We observer that the throughput is highest using only a single client thread and that the throughput is lower the higher the number of client thread is, which is also what we expected since we use the non-concurrent version of the bookstore, and the whole bookstore is locked when a single client thread is being served. We observe that the two curves follows the same trend, but that the throughput, when using the same address space, is around a factor of 100 highter than the execution across address spaces. The is also no surpise since a communication between the bookstore server and the client is expected to be much faster when they communicate via a shared address space. \\
