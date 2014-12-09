@@ -85,19 +85,27 @@ Kai Ejler Rasmussen}
 	\item 
 	Figure \ref{fig1} shows the average thorughput that we have measured using the different numbers of concurrent workload threads above-mentioned. Notice that the throughput scala is logarithmic with base 10. The blue line show our measurements using executions in the same address space and the orange line shows our measurements using executions across address spaces. We observer that the throughput is highest using only a single client thread and that the throughput is lower the higher the number of client thread is, which is also what we expected since we use the non-concurrent version of the bookstore, and the whole bookstore is locked when a single client thread is being served. We observe that the two curves follows the same trend, but that the throughput, when using the same address space, is around a factor of 100 highter than the execution across address spaces. The is also no surpise since a communication between the bookstore server and the client is expected to be much faster when they communicate via a shared address space. \\
 	
-
 	Figure \ref{fig2} shows the average latency that we have measured using the same number of concurrent workload threads as above. Notice that the latency scala is logarithmic with base 10. Like above the blue line shows execution with a shared address space and the orange line shows execution with seperated address spaces. We observe that our latency graph is directly connected with our throughput graph (Figure \ref{fig1}) and that both lines in \ref{fig2} seems to be the multiplicative inverse of the lines in \ref{fig1}, which is no suprise since we expected the latency and the throughput to have the following relation when our bookstore don't use any concurrentcy:
+
 	\begin{align*}
 		throughput = \frac{1}{latency}
 	\end{align*}
 	With this observation all the observation we made for Figure \ref{fig1} also holds for \ref{fig2}.
+
+	\item Since the hardware being used during the performance tests also have been used for other programs etc., with potential different workload at the same time, does  the metrics possible have some reliability issues. On the other hand, since all of the worker are doing 500 requests each time in addition to the warm-up runs, do we minimize the potential fluctuations.
+	\newline	
+	The metrics calculated using 1000 works are more reliable than the once calculated using 1 worker, since the proportion of requests is respectively half a million compared to 500. This could be optimized in such way that no matter the amount of worker, we would always do the same amount of requests.
+	\newline
+	
+	Additional interesting metrics to measure on a web server like this, could be i.e. utilization, since we experienced during these performance tests that all of the CPU power on the hardware being used, was fully loaded, whereas the most of the RAM was free. Doing tests specialized to measure these metrics, could reveal underlying information about the system leading to potential improvements of the system using i.e. caching.
+
 	\begin{center}
-		\begin{figure}
+		\begin{figure}[h!]
 				\includegraphics[scale=0.6]{throughput.png}
 				\caption{Plot of average throughput using 1 to 1000 concurrent workload threads}
 				\label{fig1}
 		\end{figure}
-		\begin{figure}
+		\begin{figure}[h!]
 				\includegraphics[scale=0.6]{latency.png}
 				\caption{Plot of average latency using 1 to 1000 concurrent workload threads}				
 				\label{fig2}
