@@ -62,15 +62,28 @@ Kai Ejler Rasmussen}
 	\newline
 	
 	We have been using following hardware to run our tests on: Intel(R) Core(TM) i7-2600 CPU @ 3.40GHz and 8,00 GB Ram.
-	\item TODO
+	
+
+
+	\item 
+	Figure \ref{fig1} shows the average thorughput that we have measured using the different numbers of concurrent workload threads above-mentioned. Notice that the throughput scala is logarithmic with base 10. The blue line show our measurements using executions in the same address space and the orange line shows our measurements using executions across address spaces. We observer that the throughput is highest using only a single client thread and that the throughput is lower the higher the number of client thread is, which is also what we expected since we use the non-concurrent version of the bookstore, and the whole bookstore is locked when a single client thread is being served. We observe that the two curves follows the same trend, but that the throughput, when using the same address space, is around a factor of 100 highter than the execution across address spaces. The is also no surpise since a communication between the bookstore server and the client is expected to be much faster when they communicate via a shared address space. \\
+	
+
+	Figure \ref{fig2} shows the average latency that we have measured using the same number of concurrent workload threads as above. Notice that the latency scala is logarithmic with base 10. Like above the blue line shows execution with a shared address space and the orange line shows execution with seperated address spaces. We observe that our latency graph is directly connected with our throughput graph (Figure \ref{fig1}) and that both lines in \ref{fig2} seems to be the multiplicative inverse of the lines in \ref{fig1}, which is no suprise since we expected the latency and the throughput to have the following relation when our bookstore don't use any concurrentcy:
+	\begin{align*}
+		throughput = \frac{1}{latency}
+	\end{align*}
+	With this observation all the observation we made for Figure \ref{fig1} also holds for \ref{fig2}.
 	\begin{center}
 		\begin{figure}
-				\includegraphics[scale=0.5]{latency.png}
-				\caption{Plot of average latency using 1 to 1000 concurrent workload threads}
+				\includegraphics[scale=0.6]{throughput.png}
+				\caption{Plot of average throughput using 1 to 1000 concurrent workload threads}
+				\label{fig1}
 		\end{figure}
 		\begin{figure}
-				\includegraphics[scale=0.5]{throughput.png}
-				\caption{Plot of average throughput using 1 to 1000 concurrent workload threads}
+				\includegraphics[scale=0.6]{latency.png}
+				\caption{Plot of average latency using 1 to 1000 concurrent workload threads}				
+				\label{fig2}
 		\end{figure}
 	\end{center}
 \end{enumerate}
