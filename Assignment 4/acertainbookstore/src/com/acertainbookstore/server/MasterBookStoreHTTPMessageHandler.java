@@ -42,7 +42,7 @@ public class MasterBookStoreHTTPMessageHandler extends AbstractHandler {
 	public void handle(String target, Request baseRequest,
 			HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
-		BookStoreMessageTag messageTag;
+        BookStoreMessageTag messageTag;
 		String numBooksString = null;
 		int numBooks = -1;
 		String requestURI;
@@ -91,7 +91,8 @@ public class MasterBookStoreHTTPMessageHandler extends AbstractHandler {
 				break;
 
 			case REMOVEALLBOOKS:
-				xml = BookStoreUtility.extractPOSTDataFromRequest(request);
+                System.out.println("HALLO! REMOVEALLBOOKS");
+                xml = BookStoreUtility.extractPOSTDataFromRequest(request);
 
 				bookStoreResponse = new BookStoreResponse();
 				try {
@@ -244,7 +245,7 @@ public class MasterBookStoreHTTPMessageHandler extends AbstractHandler {
 				break;
 
 			default:
-				System.out.println("Unhandled message tag");
+				System.out.println("Unhandled message tag: " + messageTag);
 				break;
 			}
 		}
