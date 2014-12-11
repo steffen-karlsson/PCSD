@@ -54,6 +54,29 @@ public class SlaveCertainBookStore implements ReplicatedReadOnlyBookStore,
 		return result;
 	}
 
+    public synchronized void replicateRequest(ReplicationRequest request)
+            throws BookStoreException {
+        switch (request.getMessageType()) {
+            case ADDBOOKS:
+                bookStore.addBooks((Set<StockBook>) request.getDataSet());
+                break;
+            case ADDCOPIES:
+                bookStore.addCopies((Set<BookCopy>) request.getDataSet());
+                break;
+            case UPDATEEDITORPICKS:
+                bookStore.updateEditorPicks((Set<BookEditorPick>) request.getDataSet());
+                break;
+            case REMOVEALLBOOKS:
+                bookStore.removeAllBooks();
+                break;
+            case REMOVEBOOKS:
+                bookStore.removeBooks((Set<Integer>) request.getDataSet());
+                break;
+            default:
+                throw new BookStoreException();
+        }
+    }
+
 	public BookStoreResult getBooksByISBN(Set<Integer> isbns)
 			throws BookStoreException {
 		BookStoreResult result = new BookStoreResult(
