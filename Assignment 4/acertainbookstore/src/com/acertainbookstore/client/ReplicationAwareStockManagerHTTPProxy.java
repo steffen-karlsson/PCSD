@@ -5,10 +5,7 @@ package com.acertainbookstore.client;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.jetty.client.ContentExchange;
 import org.eclipse.jetty.client.HttpClient;
@@ -39,6 +36,8 @@ public class ReplicationAwareStockManagerHTTPProxy implements StockManager {
 	private String masterAddress;
 	private String filePath = "/universe/acertainbookstore/proxy.properties";
 	private long snapshotId = 0;
+
+    private Random random = new Random(System.currentTimeMillis());
 
 	/**
 	 * Initialize the client object
@@ -97,7 +96,14 @@ public class ReplicationAwareStockManagerHTTPProxy implements StockManager {
 	}
 
 	public String getReplicaAddress() {
-		return ""; // TODO
+        // Master has half the chance as rest of slaves to get the read only requests
+        int inx = (int) Math.ceil(random.nextInt(slaveAddresses.size() * 2) / 2.0);
+        switch (inx) {
+            case 0:
+                return masterAddress;
+            default:
+                return (String) slaveAddresses.toArray()[inx - 1];
+        }
 	}
 
 	public String getMasterServerAddress() {
