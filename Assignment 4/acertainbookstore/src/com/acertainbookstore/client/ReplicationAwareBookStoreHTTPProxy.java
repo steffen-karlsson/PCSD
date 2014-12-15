@@ -101,7 +101,7 @@ public class ReplicationAwareBookStoreHTTPProxy implements BookStore {
 
 	public String getReplicaAddress() {
         // Master has half the chance as rest of slaves to get the read only requests
-        int inx = (int) Math.ceil(random.nextInt(slaveAddresses.size() * 2) / 2.0);
+        int inx = (int) Math.ceil(random.nextInt((slaveAddresses.size() * 2) + 1) / 2.0);
         switch (inx) {
             case 0:
                 return masterAddress;
