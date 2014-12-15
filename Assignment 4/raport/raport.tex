@@ -46,6 +46,16 @@ When or if the coordinator receives an yes message from all participants in the 
 
 When the participant receives the preCommit message, it sends an acknowledgement back to the coordinator, otherwise it aborts the transaction. If the coordinator receives an acknowledgement from all participants within their timeout, it sends a doCommit message to the participant, which is answered with a haveCommited message if all is completed, either it aborts.
 
+\subsection*{Questions for Discussion on the Replication mechanism}
+\begin{enumerate}
+	\item The \texttt{CertainBookStoreReplicator} is making use of the build thread pool from the concurrency library, \texttt{ExecutorService}, in order to instantiate the list of future tasks. A single task is defined by the \texttt{CertainBookStore\-ReplicationTask} class, which instantiates a new \texttt{ContentExchange} which contains the logic for parceling the actual request to the individual slaves, such that they can execute the request individually.
+	\newline
+	
+	Our load balancing is the following: On all read requests (requests that can be handle both by the master-server and the slave servers) we gives all slave-servers a twice as large prohability to receive the request than the master server. The reason for the distribution is that the master-server also is responsible for handling write-requests, and to balance the load between all servers we doesn't forward as many read-requests to the master-server, as to the slave-servers.
+	\item
+	\item
+	\item
+\end{enumerate}
 
 
 \end{document}
