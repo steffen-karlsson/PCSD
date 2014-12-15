@@ -31,5 +31,21 @@ Kai Ejler Rasmussen}
 \end{enumerate}
 
 
+\subsection*{Question 2: Distributed Coordination}
+When a coordinator receives a transaction request, using the three-phase commit protocol, the coordinator sends a canCommit message to the participant and moves along to a waiting/idle state, unless a failure happens - if such scenario, the coordinator aborts. 
+\newline
+
+When the participant receives the canCommit message, it sends yes or no back to the coordinator depending on if it agrees or not - or no if a failure happens followed by moving to the aborted state. 
+\newline
+
+During the waiting/idle state on the coordinator, if anything unexpected, such as a failure or timeout happens the coordinator sends an abort message to all participants. A timeout could happens, because the coordinator usually implements some kind of timing mechanism, such that if no answer is received from a participant within a certain amount of time, the coordinate assumes its a no, which is how the coordinator deals with delays during the 'uncertain' periods.
+\newline
+
+When or if the coordinator receives an yes message from all participants in the waiting state, it responds with a preCommit message and moves to the next state. In this state all the same criteria are applicable as for the previous state, regarding timeout.
+\newline
+
+When the participant receives the preCommit message, it sends an acknowledgement back to the coordinator, otherwise it aborts the transaction. If the coordinator receives an acknowledgement from all participants within their timeout, it sends a doCommit message to the participant, which is answered with a haveCommited message if all is completed, either it aborts.
+
+
 
 \end{document}
