@@ -27,10 +27,8 @@ public class CertainBookStoreReplicationTask implements
 
 	@Override
 	public ReplicationResult call() throws Exception {
-        System.out.println("FOOBAR");
         ContentExchange exchange = new ContentExchange();
         String urlString = server + BookStoreMessageTag.REPLICATEREQUEST;
-        System.out.println("URL: " + urlString);
         exchange.setMethod("POST");
         exchange.setURL(urlString);
 
@@ -42,12 +40,8 @@ public class CertainBookStoreReplicationTask implements
             HttpClient client = new HttpClient();
             client.start();
             BookStoreUtility.SendAndRecv(client, exchange);
-            System.out.println("FOOBAR1");
         } catch (BookStoreException ignore) {
-            System.out.println("FOOBAR2");
             return new ReplicationResult(server, false);
-        } finally {
-            System.out.println("FOOBAR3");
         }
         return new ReplicationResult(server, true);
     }
