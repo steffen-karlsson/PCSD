@@ -20,12 +20,12 @@ Kai Ejler Rasmussen}
 \begin{enumerate}
 	\item In the daisy chain network both network links must work for the network to be fully connected, and the probability that one of them fails is $2p$ (we assume that the event of failing links are independent), so we get the probability that all buildings are connected to be: \\
   $P(connected) = 1 - 2p$
- 	\item In the fully connected network the network we still connect all the buildings if we loose a single link, but the connnection will be lost if we loose two or more links. We get the probability (again assuming that all failures are independent) that all buildings are connected to be: \\
+ 	\item In the fully connected network the network we still connect all the buildings if we lose a single link, but the connection will be lost if we loose two or more links. We get the probability (again assuming that all failures are independent) that all buildings are connected to be: \\
   $P(connect) = 1 - (3 \cdot p^2 \cdot (1-p) + p^3)$. \\
-  $3 \cdot p^2 \cdot (1-p)$ is the prohability that exactly two links fails (using the bionomial probability density function), and $p^3$ is the prohability that all three links fails. 
-  \item The prohability that the daisy chain network is connecting all buldings: \\
+  $3 \cdot p^2 \cdot (1-p)$ is the prohability that exactly two links fails (using the bionomial probability density function), and $p^3$ is the probability that all three links fails. 
+  \item The probability that the daisy chain network is connecting all buildings: \\
   $C_1 = 1 - 2 \cdot 0.000001 = 0.999998$ \\
-  The prohability that the fully connected network is connecting all buildings: \\
+  The probability that the fully connected network is connecting all buildings: \\
   $C_2 = 1 - (3 \cdot (0.0001)^2 \cdot (1-0.0001) + 0.0001^3) = 0.99999996$ \\
   So assuming that all network failures are independent and that the town council wants the most reliable solution he should go with the fully connected network.
 \end{enumerate}
@@ -41,17 +41,17 @@ When the participant receives the canCommit message, it sends yes or no back to 
 During the waiting/idle state on the coordinator, if anything unexpected, such as a failure or timeout happens the coordinator sends an abort message to all participants. A timeout could happens, because the coordinator usually implements some kind of timing mechanism, such that if no answer is received from a participant within a certain amount of time, the coordinate assumes its a no, which is how the coordinator deals with delays during the 'uncertain' periods.
 \newline
 
-When or if the coordinator receives an yes message from all participants in the waiting state, it responds with a preCommit message and moves to the next state. In this state all the same criteria are applicable as for the previous state, regarding timeout.
+When or if the coordinator receives a yes message from all participants in the waiting state, it responds with a preCommit message and moves to the next state. In this state all the same criteria are applicable as for the previous state, regarding timeout.
 \newline
 
 When the participant receives the preCommit message, it sends an acknowledgement back to the coordinator, otherwise it aborts the transaction. If the coordinator receives an acknowledgement from all participants within their timeout, it sends a doCommit message to the participant, which is answered with a haveCommited message if all is completed, either it aborts.
 
 \subsection*{Questions for Discussion on the Replication mechanism}
 \begin{enumerate}
-	\item The \texttt{CertainBookStoreReplicator} is making use of the build thread pool from the concurrency library, \texttt{ExecutorService}, in order to instantiate the list of future tasks. A single task is defined by the \texttt{CertainBookStore\-ReplicationTask} class, which instantiates a new \texttt{ContentExchange} which contains the logic for parceling the actual request to the individual slaves, such that they can execute the request individually.
+	\item The \texttt{CertainBookStoreReplicator} is making use of the build thread pool from the concurrency library, \texttt{ExecutorService}, in order to instantiate the list of future tasks. A single task is defined by the \texttt{CertainBookStore\-ReplicationTask} class, which instantiates a new \texttt{ContentExchange} which contains the logic for parcelling the actual request to the individual slaves, such that they can execute the request individually.
 	\newline
 	
-	Our load balancing is the following: On all read requests (requests that can be handle both by the master-server and the slave servers) we gives all slave-servers a twice as large prohability to receive the request than the master server. The reason for the distribution is that the master-server also is responsible for handling write-requests, and to balance the load between all servers we doesn't forward as many read-requests to the master-server, as to the slave-servers.
+	Our load balancing is the following: On all read requests (requests that can be handle both by the master-server and the slave servers) we give all slave-servers a twice as large probability to receive the request than the master server. The reason for the distribution is that the master-server also is responsible for handling write-requests, and to balance the load between all servers we doesn't forward as many read-requests to the master-server, as to the slave-servers.
 	\item
 	\item
 	\item The current implementation of the replication waits for an ack from each slave. This means that the master will hang if the network is split. This leaves the data on the slaves frozen in time at the moment of the network split. The slaves will still serve reads but they are never updated through replication, thus serving possibly outdated and invalid data.
