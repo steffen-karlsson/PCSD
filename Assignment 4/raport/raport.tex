@@ -54,7 +54,7 @@ When the participant receives the preCommit message, it sends an acknowledgement
 	Our load balancing is the following: On all read requests (requests that can be handle both by the master-server and the slave servers) we gives all slave-servers a twice as large prohability to receive the request than the master server. The reason for the distribution is that the master-server also is responsible for handling write-requests, and to balance the load between all servers we doesn't forward as many read-requests to the master-server, as to the slave-servers.
 	\item
 	\item
-	\item
+	\item The current implementation of the replication waits for an ack from each slave. This means that the master will hang if the network is split. This leaves the data on the slaves frozen in time at the moment of the network split. The slaves will still serve reads but they are never updated through replication, thus serving possibly outdated and invalid data.
 \end{enumerate}
 
 
